@@ -116,8 +116,9 @@ class ExampleViewController: UIViewController {
            user's photo library. Defaults to true. */
         config.shouldSaveNewPicturesToAlbum = false
 
-        /* Choose the videoCompression. Defaults to AVAssetExportPresetHighestQuality */
-        config.video.compression = AVAssetExportPresetPassthrough
+        /* Choose the videoCompression. Defaults to AVAssetExportPresetHighestQuality
+         Note: AVAssetExportPresetPassthrough will not crop the video */
+        config.video.compression = AVAssetExportPresetHighestQuality
 
         /* Choose the recordingSizeLimit. If not setted, then limit is by time. */
         // config.video.recordingSizeLimit = 10000000
