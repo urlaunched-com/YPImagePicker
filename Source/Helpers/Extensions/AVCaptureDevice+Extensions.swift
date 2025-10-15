@@ -49,6 +49,10 @@ internal extension AVCaptureDevice {
             return nil
         }
 
+        if let wideAngleDevice = devices.first(where: { $0.deviceType == .builtInWideAngleCamera }) {
+            return wideAngleDevice
+        }
+
         return devices.first
     }
 }
