@@ -101,12 +101,12 @@ internal class YPCameraView: UIView, UIGestureRecognizerDelegate {
         
         timeElapsedLabel-(15+sideMargin)-|
         timeElapsedLabel.Top == previewViewContainer.Top + 15
-        
+
         shotButton.centerVertically()
         shotButton.size(84).centerHorizontally()
 
         zoomButtonsContainer.centerHorizontally()
-        zoomButtonsContainer.Bottom == flashButton.Top - 20
+        zoomButtonsContainer.Top == previewViewContainer.Top + 60
 
         // Style
         backgroundColor = YPConfig.colors.photoVideoScreenBackgroundColor
