@@ -118,7 +118,7 @@ class YPVideoCaptureHelper: NSObject {
     }
     
     // MARK: - Zoom
-    
+
     public func zoom(began: Bool, scale: CGFloat) {
         guard let device = videoInput?.device else {
             return
@@ -141,6 +141,27 @@ class YPVideoCaptureHelper: NSObject {
                                          min(desiredZoomFactor, maxAvailableVideoZoomFactor))
         } catch let error {
             ypLog("Error: \(error)")
+        }
+    }
+
+    public func setZoomFactor(_ factor: CGFloat) {
+        guard let device = videoInput?.device else {
+            return
+        }
+
+        do {
+            try device.lockForConfiguration()
+            defer { device.unlockForConfiguration() }
+
+            let minAvailableVideoZoomFactor = device.minAvailableVideoZoomFactor
+            let maxAvailableVideoZoomFactor = min(device.maxAvailableVideoZoomFactor, YPConfig.maxCameraZoomFactor)
+
+            let clampedFactor = max(minAvailableVideoZoomFactor,
+                                   min(factor, maxAvailableVideoZoomFactor))
+            device.videoZoomFactor = clampedFactor
+            initVideoZoomFactor = clampedFactor
+        } catch let error {
+            ypLog("Error setting zoom: \(error)")
         }
     }
     
