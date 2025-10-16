@@ -10,9 +10,7 @@ import UIKit
 import AVFoundation
 
 internal final class YPPhotoCaptureHelper: NSObject {
-    var currentFlashMode: YPFlashMode {
-        return YPFlashMode(torchMode: device?.torchMode)
-    }
+    var currentFlashMode: YPFlashMode = .auto
     var device: AVCaptureDevice? {
         return deviceInput?.device
     }
@@ -21,7 +19,7 @@ internal final class YPPhotoCaptureHelper: NSObject {
         let deviceHasFlash = device?.hasFlash ?? false
         return !isFrontCamera && deviceHasFlash
     }
-    
+
     private let sessionQueue = DispatchQueue(label: "YPPhotoCaptureHelperQueue", qos: .background)
     private let session = AVCaptureSession()
     private var deviceInput: AVCaptureDeviceInput?
@@ -135,8 +133,19 @@ extension YPPhotoCaptureHelper {
         guard let device = device else {
             return
         }
-        
+
         setFocusPointOnDevice(device: device, point: point)
+    }
+
+    func toggleFlashMode() {
+        switch currentFlashMode {
+        case .off:
+            currentFlashMode = .on
+        case .on:
+            currentFlashMode = .auto
+        case .auto:
+            currentFlashMode = .off
+        }
     }
 }
 

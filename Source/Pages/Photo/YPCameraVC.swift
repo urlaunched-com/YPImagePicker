@@ -136,6 +136,7 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
     func flipButtonTapped() {
         self.photoCapture.flipCamera {
             self.updateFlashButtonUI()
+            self.configureAvailableCameras()
         }
     }
     
@@ -217,7 +218,7 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
     
     @objc
     func flashButtonTapped() {
-        photoCapture.device?.tryToggleTorch()
+        photoCapture.toggleFlashMode()
         updateFlashButtonUI()
     }
     
@@ -233,6 +234,7 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
     func zoom05xTapped() {
         photoCapture.switchCamera(to: .builtInUltraWideCamera) {
             self.v.updateZoomButtonSelection(self.v.zoomButton05x)
+            self.updateFlashButtonUI()
         }
     }
 
@@ -240,6 +242,7 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
     func zoom1xTapped() {
         photoCapture.switchCamera(to: .builtInWideAngleCamera) {
             self.v.updateZoomButtonSelection(self.v.zoomButton1x)
+            self.updateFlashButtonUI()
         }
     }
 
@@ -247,6 +250,7 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
     func zoom2xTapped() {
         photoCapture.switchCamera(to: .builtInTelephotoCamera) {
             self.v.updateZoomButtonSelection(self.v.zoomButton2x)
+            self.updateFlashButtonUI()
         }
     }
 }
