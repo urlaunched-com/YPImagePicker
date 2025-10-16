@@ -73,16 +73,16 @@ extension YPPhotoCaptureHelper {
         guard let device = device else {
             return
         }
-        
+
         if began {
             initVideoZoomFactor = device.videoZoomFactor
             return
         }
-        
+
         do {
             try device.lockForConfiguration()
             defer { device.unlockForConfiguration() }
-            
+
             let minAvailableVideoZoomFactor = device.minAvailableVideoZoomFactor
             let maxAvailableVideoZoomFactor = min(device.maxAvailableVideoZoomFactor, YPConfig.maxCameraZoomFactor)
 
@@ -91,6 +91,27 @@ extension YPPhotoCaptureHelper {
                                          min(desiredZoomFactor, maxAvailableVideoZoomFactor))
         } catch let error {
             ypLog("Error: \(error)")
+        }
+    }
+
+    func setZoomFactor(_ factor: CGFloat) {
+        guard let device = device else {
+            return
+        }
+
+        do {
+            try device.lockForConfiguration()
+            defer { device.unlockForConfiguration() }
+
+            let minAvailableVideoZoomFactor = device.minAvailableVideoZoomFactor
+            let maxAvailableVideoZoomFactor = min(device.maxAvailableVideoZoomFactor, YPConfig.maxCameraZoomFactor)
+
+            let clampedFactor = max(minAvailableVideoZoomFactor,
+                                   min(factor, maxAvailableVideoZoomFactor))
+            device.videoZoomFactor = clampedFactor
+            initVideoZoomFactor = clampedFactor
+        } catch let error {
+            ypLog("Error setting zoom: \(error)")
         }
     }
     

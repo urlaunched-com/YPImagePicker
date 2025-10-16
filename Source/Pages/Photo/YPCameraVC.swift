@@ -47,7 +47,11 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
         v.flashButton.addTarget(self, action: #selector(flashButtonTapped), for: .touchUpInside)
         v.shotButton.addTarget(self, action: #selector(shotButtonTapped), for: .touchUpInside)
         v.flipButton.addTarget(self, action: #selector(flipButtonTapped), for: .touchUpInside)
-        
+
+        v.zoomButton05x.addTarget(self, action: #selector(zoom05xTapped), for: .touchUpInside)
+        v.zoomButton1x.addTarget(self, action: #selector(zoom1xTapped), for: .touchUpInside)
+        v.zoomButton2x.addTarget(self, action: #selector(zoom2xTapped), for: .touchUpInside)
+
         // Prevent flip and shot button clicked at the same time
         v.shotButton.isExclusiveTouch = true
         v.flipButton.isExclusiveTouch = true
@@ -215,5 +219,29 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
             self.v.flashButton.setImage(flashImage, for: .normal)
             self.v.flashButton.isHidden = !self.photoCapture.hasFlash
         }
+    }
+
+    @objc
+    func zoom05xTapped() {
+        photoCapture.setZoomFactor(0.5)
+        updateZoomButtonsUI(selectedButton: v.zoomButton05x)
+    }
+
+    @objc
+    func zoom1xTapped() {
+        photoCapture.setZoomFactor(1.0)
+        updateZoomButtonsUI(selectedButton: v.zoomButton1x)
+    }
+
+    @objc
+    func zoom2xTapped() {
+        photoCapture.setZoomFactor(2.0)
+        updateZoomButtonsUI(selectedButton: v.zoomButton2x)
+    }
+
+    func updateZoomButtonsUI(selectedButton: UIButton) {
+        v.zoomButton05x.isSelected = (selectedButton == v.zoomButton05x)
+        v.zoomButton1x.isSelected = (selectedButton == v.zoomButton1x)
+        v.zoomButton2x.isSelected = (selectedButton == v.zoomButton2x)
     }
 }

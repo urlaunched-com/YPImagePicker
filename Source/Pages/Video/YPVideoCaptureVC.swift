@@ -82,6 +82,10 @@ internal class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
         v.flashButton.addTarget(self, action: #selector(flashButtonTapped), for: .touchUpInside)
         v.shotButton.addTarget(self, action: #selector(shotButtonTapped), for: .touchUpInside)
         v.flipButton.addTarget(self, action: #selector(flipButtonTapped), for: .touchUpInside)
+
+        v.zoomButton05x.addTarget(self, action: #selector(zoom05xTapped), for: .touchUpInside)
+        v.zoomButton1x.addTarget(self, action: #selector(zoom1xTapped), for: .touchUpInside)
+        v.zoomButton2x.addTarget(self, action: #selector(zoom2xTapped), for: .touchUpInside)
     }
     
     // MARK: - Flip Camera
@@ -238,5 +242,29 @@ internal class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
         } else {
             return .noFlash
         }
+    }
+
+    @objc
+    func zoom05xTapped() {
+        videoHelper.setZoomFactor(0.5)
+        updateZoomButtonsUI(selectedButton: v.zoomButton05x)
+    }
+
+    @objc
+    func zoom1xTapped() {
+        videoHelper.setZoomFactor(1.0)
+        updateZoomButtonsUI(selectedButton: v.zoomButton1x)
+    }
+
+    @objc
+    func zoom2xTapped() {
+        videoHelper.setZoomFactor(2.0)
+        updateZoomButtonsUI(selectedButton: v.zoomButton2x)
+    }
+
+    func updateZoomButtonsUI(selectedButton: UIButton) {
+        v.zoomButton05x.isSelected = (selectedButton == v.zoomButton05x)
+        v.zoomButton1x.isSelected = (selectedButton == v.zoomButton1x)
+        v.zoomButton2x.isSelected = (selectedButton == v.zoomButton2x)
     }
 }

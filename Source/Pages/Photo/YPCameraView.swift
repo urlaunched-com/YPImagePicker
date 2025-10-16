@@ -18,10 +18,18 @@ internal class YPCameraView: UIView, UIGestureRecognizerDelegate {
     let flashButton = UIButton()
     let timeElapsedLabel = UILabel()
     let progressBar = UIProgressView()
+    let zoomButtonsContainer = UIStackView()
+    let zoomButton05x = UIButton()
+    let zoomButton1x = UIButton()
+    let zoomButton2x = UIButton()
     
     convenience init(overlayView: UIView? = nil) {
         self.init(frame: .zero)
         
+        zoomButtonsContainer.addArrangedSubview(zoomButton05x)
+        zoomButtonsContainer.addArrangedSubview(zoomButton1x)
+        zoomButtonsContainer.addArrangedSubview(zoomButton2x)
+
         if let overlayView = overlayView {
             // View Hierarchy
             subviews(
@@ -31,6 +39,7 @@ internal class YPCameraView: UIView, UIGestureRecognizerDelegate {
                 timeElapsedLabel,
                 flashButton,
                 flipButton,
+                zoomButtonsContainer,
                 buttonsContainer.subviews(
                     shotButton
                 )
@@ -43,6 +52,7 @@ internal class YPCameraView: UIView, UIGestureRecognizerDelegate {
                 timeElapsedLabel,
                 flashButton,
                 flipButton,
+                zoomButtonsContainer,
                 buttonsContainer.subviews(
                     shotButton
                 )
@@ -91,10 +101,13 @@ internal class YPCameraView: UIView, UIGestureRecognizerDelegate {
         
         timeElapsedLabel-(15+sideMargin)-|
         timeElapsedLabel.Top == previewViewContainer.Top + 15
-        
+
         shotButton.centerVertically()
         shotButton.size(84).centerHorizontally()
-        
+
+        zoomButtonsContainer.centerHorizontally()
+        zoomButtonsContainer.Top == previewViewContainer.Top + 60
+
         // Style
         backgroundColor = YPConfig.colors.photoVideoScreenBackgroundColor
         previewViewContainer.backgroundColor = UIColor.ypLabel
@@ -111,5 +124,25 @@ internal class YPCameraView: UIView, UIGestureRecognizerDelegate {
         flashButton.setImage(YPConfig.icons.flashOffIcon, for: .normal)
         flipButton.setImage(YPConfig.icons.loopIcon, for: .normal)
         shotButton.setImage(YPConfig.icons.capturePhotoImage, for: .normal)
+
+        zoomButtonsContainer.axis = .horizontal
+        zoomButtonsContainer.spacing = 8
+        zoomButtonsContainer.distribution = .fillEqually
+
+        [zoomButton05x, zoomButton1x, zoomButton2x].forEach { button in
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+            button.setTitleColor(.white.withAlphaComponent(0.7), for: .normal)
+            button.setTitleColor(.white, for: .selected)
+            button.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+            button.layer.cornerRadius = 20
+            button.widthAnchor.constraint(equalToConstant: 50).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        }
+
+        zoomButton05x.setTitle(".5", for: .normal)
+        zoomButton1x.setTitle("1", for: .normal)
+        zoomButton2x.setTitle("2", for: .normal)
+
+        zoomButton1x.isSelected = true
     }
 }
