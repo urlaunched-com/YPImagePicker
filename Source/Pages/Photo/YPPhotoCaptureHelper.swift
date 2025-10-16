@@ -94,24 +94,31 @@ extension YPPhotoCaptureHelper {
         }
     }
 
-    func setZoomFactor(_ factor: CGFloat) {
-        guard let device = device else {
-            return
-        }
+    func switchCamera(to deviceType: AVCaptureDevice.DeviceType, completion: @escaping () -> Void) {
+        sessionQueue.async { [weak self] in
+            guard let self = self else { return }
 
-        do {
-            try device.lockForConfiguration()
-            defer { device.unlockForConfiguration() }
+            self.session.beginConfiguration()
+            self.session.resetInputs()
 
-            let minAvailableVideoZoomFactor = device.minAvailableVideoZoomFactor
-            let maxAvailableVideoZoomFactor = min(device.maxAvailableVideoZoomFactor, YPConfig.maxCameraZoomFactor)
+            let position = self.deviceInput?.device.position ?? .back
+            guard let newDevice = AVCaptureDevice.deviceForPositionAndType(position, type: deviceType),
+                  let newInput = try? AVCaptureDeviceInput(device: newDevice) else {
+                self.session.commitConfiguration()
+                DispatchQueue.main.async { completion() }
+                return
+            }
 
-            let clampedFactor = max(minAvailableVideoZoomFactor,
-                                   min(factor, maxAvailableVideoZoomFactor))
-            device.videoZoomFactor = clampedFactor
-            initVideoZoomFactor = clampedFactor
-        } catch let error {
-            ypLog("Error setting zoom: \(error)")
+            self.deviceInput = newInput
+            if self.session.canAddInput(newInput) {
+                self.session.addInput(newInput)
+            }
+
+            self.session.commitConfiguration()
+
+            DispatchQueue.main.async {
+                completion()
+            }
         }
     }
     

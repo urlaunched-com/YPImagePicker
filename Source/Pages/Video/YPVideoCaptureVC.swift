@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 internal class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
     var didCaptureVideo: ((URL) -> Void)?
@@ -58,8 +59,16 @@ internal class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
                                withVideoRecordingLimit: YPConfig.video.recordingTimeLimit) { [weak self] in
             DispatchQueue.main.async {
                 self?.refreshState()
+                self?.configureAvailableCameras()
             }
         }
+    }
+
+    func configureAvailableCameras() {
+        let position: AVCaptureDevice.Position = YPConfig.usesFrontCamera ? .front : .back
+        let hasUltraWide = AVCaptureDevice.hasCamera(position: position, type: .builtInUltraWideCamera)
+        let hasTelephoto = AVCaptureDevice.hasCamera(position: position, type: .builtInTelephotoCamera)
+        v.configureZoomButtons(hasUltraWide: hasUltraWide, hasTelephoto: hasTelephoto)
     }
     
     func refreshState() {
@@ -246,25 +255,22 @@ internal class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
 
     @objc
     func zoom05xTapped() {
-        videoHelper.setZoomFactor(0.5)
-        updateZoomButtonsUI(selectedButton: v.zoomButton05x)
+        videoHelper.switchCamera(to: .builtInUltraWideCamera) {
+            self.v.updateZoomButtonSelection(self.v.zoomButton05x)
+        }
     }
 
     @objc
     func zoom1xTapped() {
-        videoHelper.setZoomFactor(1.0)
-        updateZoomButtonsUI(selectedButton: v.zoomButton1x)
+        videoHelper.switchCamera(to: .builtInWideAngleCamera) {
+            self.v.updateZoomButtonSelection(self.v.zoomButton1x)
+        }
     }
 
     @objc
     func zoom2xTapped() {
-        videoHelper.setZoomFactor(2.0)
-        updateZoomButtonsUI(selectedButton: v.zoomButton2x)
-    }
-
-    func updateZoomButtonsUI(selectedButton: UIButton) {
-        v.zoomButton05x.isSelected = (selectedButton == v.zoomButton05x)
-        v.zoomButton1x.isSelected = (selectedButton == v.zoomButton1x)
-        v.zoomButton2x.isSelected = (selectedButton == v.zoomButton2x)
+        videoHelper.switchCamera(to: .builtInTelephotoCamera) {
+            self.v.updateZoomButtonSelection(self.v.zoomButton2x)
+        }
     }
 }

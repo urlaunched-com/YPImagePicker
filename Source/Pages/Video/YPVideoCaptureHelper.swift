@@ -144,24 +144,37 @@ class YPVideoCaptureHelper: NSObject {
         }
     }
 
-    public func setZoomFactor(_ factor: CGFloat) {
-        guard let device = videoInput?.device else {
-            return
-        }
+    public func switchCamera(to deviceType: AVCaptureDevice.DeviceType, completion: @escaping () -> Void) {
+        sessionQueue.async { [weak self] in
+            guard let strongSelf = self else { return }
 
-        do {
-            try device.lockForConfiguration()
-            defer { device.unlockForConfiguration() }
+            strongSelf.session.beginConfiguration()
+            strongSelf.session.resetInputs()
 
-            let minAvailableVideoZoomFactor = device.minAvailableVideoZoomFactor
-            let maxAvailableVideoZoomFactor = min(device.maxAvailableVideoZoomFactor, YPConfig.maxCameraZoomFactor)
+            let position = strongSelf.videoInput?.device.position ?? .back
+            guard let newDevice = AVCaptureDevice.deviceForPositionAndType(position, type: deviceType),
+                  let newInput = try? AVCaptureDeviceInput(device: newDevice) else {
+                strongSelf.session.commitConfiguration()
+                DispatchQueue.main.async { completion() }
+                return
+            }
 
-            let clampedFactor = max(minAvailableVideoZoomFactor,
-                                   min(factor, maxAvailableVideoZoomFactor))
-            device.videoZoomFactor = clampedFactor
-            initVideoZoomFactor = clampedFactor
-        } catch let error {
-            ypLog("Error setting zoom: \(error)")
+            strongSelf.videoInput = newInput
+            if strongSelf.session.canAddInput(newInput) {
+                strongSelf.session.addInput(newInput)
+            }
+
+            if let audioDevice = AVCaptureDevice.audioCaptureDevice,
+               let audioInput = try? AVCaptureDeviceInput(device: audioDevice),
+               strongSelf.session.canAddInput(audioInput) {
+                strongSelf.session.addInput(audioInput)
+            }
+
+            strongSelf.session.commitConfiguration()
+
+            DispatchQueue.main.async {
+                completion()
+            }
         }
     }
     

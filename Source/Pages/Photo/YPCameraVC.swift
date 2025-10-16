@@ -77,9 +77,17 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
                 DispatchQueue.main.async {
                     self?.isInited = true
                     self?.updateFlashButtonUI()
+                    self?.configureAvailableCameras()
                 }
             })
         }
+    }
+
+    func configureAvailableCameras() {
+        let position: AVCaptureDevice.Position = YPConfig.usesFrontCamera ? .front : .back
+        let hasUltraWide = AVCaptureDevice.hasCamera(position: position, type: .builtInUltraWideCamera)
+        let hasTelephoto = AVCaptureDevice.hasCamera(position: position, type: .builtInTelephotoCamera)
+        v.configureZoomButtons(hasUltraWide: hasUltraWide, hasTelephoto: hasTelephoto)
     }
 
     @objc
@@ -223,25 +231,22 @@ internal final class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, 
 
     @objc
     func zoom05xTapped() {
-        photoCapture.setZoomFactor(0.5)
-        updateZoomButtonsUI(selectedButton: v.zoomButton05x)
+        photoCapture.switchCamera(to: .builtInUltraWideCamera) {
+            self.v.updateZoomButtonSelection(self.v.zoomButton05x)
+        }
     }
 
     @objc
     func zoom1xTapped() {
-        photoCapture.setZoomFactor(1.0)
-        updateZoomButtonsUI(selectedButton: v.zoomButton1x)
+        photoCapture.switchCamera(to: .builtInWideAngleCamera) {
+            self.v.updateZoomButtonSelection(self.v.zoomButton1x)
+        }
     }
 
     @objc
     func zoom2xTapped() {
-        photoCapture.setZoomFactor(2.0)
-        updateZoomButtonsUI(selectedButton: v.zoomButton2x)
-    }
-
-    func updateZoomButtonsUI(selectedButton: UIButton) {
-        v.zoomButton05x.isSelected = (selectedButton == v.zoomButton05x)
-        v.zoomButton1x.isSelected = (selectedButton == v.zoomButton1x)
-        v.zoomButton2x.isSelected = (selectedButton == v.zoomButton2x)
+        photoCapture.switchCamera(to: .builtInTelephotoCamera) {
+            self.v.updateZoomButtonSelection(self.v.zoomButton2x)
+        }
     }
 }

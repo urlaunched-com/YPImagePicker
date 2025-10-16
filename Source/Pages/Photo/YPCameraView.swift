@@ -130,19 +130,41 @@ internal class YPCameraView: UIView, UIGestureRecognizerDelegate {
         zoomButtonsContainer.distribution = .fillEqually
 
         [zoomButton05x, zoomButton1x, zoomButton2x].forEach { button in
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-            button.setTitleColor(.white.withAlphaComponent(0.7), for: .normal)
-            button.setTitleColor(.white, for: .selected)
-            button.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-            button.layer.cornerRadius = 20
-            button.widthAnchor.constraint(equalToConstant: 50).isActive = true
-            button.heightAnchor.constraint(equalToConstant: 40).isActive = true
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+            button.setTitleColor(.white.withAlphaComponent(0.55), for: .normal)
+            button.setTitleColor(.ypLabel, for: .selected)
+            button.backgroundColor = .clear
+            button.layer.cornerRadius = 18
+            button.widthAnchor.constraint(equalToConstant: 45).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 36).isActive = true
         }
 
-        zoomButton05x.setTitle("0,5", for: .normal)
-        zoomButton1x.setTitle("1x", for: .normal)
-        zoomButton2x.setTitle("2x", for: .normal)
+        zoomButton05x.setTitle(".5", for: .normal)
+        zoomButton1x.setTitle("1×", for: .normal)
+        zoomButton2x.setTitle("2×", for: .normal)
 
         zoomButton1x.isSelected = true
+        zoomButton1x.backgroundColor = UIColor.white.withAlphaComponent(0.25)
+    }
+
+    func configureZoomButtons(hasUltraWide: Bool, hasTelephoto: Bool) {
+        zoomButton05x.isHidden = !hasUltraWide
+        zoomButton2x.isHidden = !hasTelephoto
+
+        if !hasUltraWide && !hasTelephoto {
+            zoomButtonsContainer.isHidden = true
+        }
+    }
+
+    func updateZoomButtonSelection(_ selectedButton: UIButton) {
+        [zoomButton05x, zoomButton1x, zoomButton2x].forEach { button in
+            if button == selectedButton {
+                button.isSelected = true
+                button.backgroundColor = UIColor.white.withAlphaComponent(0.25)
+            } else {
+                button.isSelected = false
+                button.backgroundColor = .clear
+            }
+        }
     }
 }

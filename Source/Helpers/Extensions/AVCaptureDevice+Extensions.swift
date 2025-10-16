@@ -55,4 +55,42 @@ internal extension AVCaptureDevice {
 
         return devices.first
     }
+
+    class func deviceForPositionAndType(_ position: AVCaptureDevice.Position, type: AVCaptureDevice.DeviceType) -> AVCaptureDevice? {
+        let devicesSession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInUltraWideCamera, .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInDualCamera, .builtInTripleCamera, .builtInTrueDepthCamera], mediaType: .video, position: position)
+        let devices = devicesSession.devices
+
+        if let device = devices.first(where: { $0.deviceType == type }) {
+            return device
+        }
+
+        if type == .builtInUltraWideCamera {
+            if let device = devices.first(where: { $0.deviceType == .builtInTripleCamera || $0.deviceType == .builtInDualCamera }) {
+                return device
+            }
+        }
+
+        if type == .builtInTelephotoCamera {
+            if let device = devices.first(where: { $0.deviceType == .builtInTripleCamera || $0.deviceType == .builtInDualCamera }) {
+                return device
+            }
+        }
+
+        return devices.first(where: { $0.deviceType == .builtInWideAngleCamera }) ?? devices.first
+    }
+
+    class func hasCamera(position: AVCaptureDevice.Position, type: AVCaptureDevice.DeviceType) -> Bool {
+        let devicesSession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInUltraWideCamera, .builtInWideAngleCamera, .builtInTelephotoCamera, .builtInDualCamera, .builtInTripleCamera, .builtInTrueDepthCamera], mediaType: .video, position: position)
+        let devices = devicesSession.devices
+
+        if devices.contains(where: { $0.deviceType == type }) {
+            return true
+        }
+
+        if type == .builtInUltraWideCamera || type == .builtInTelephotoCamera {
+            return devices.contains(where: { $0.deviceType == .builtInTripleCamera || $0.deviceType == .builtInDualCamera })
+        }
+
+        return false
+    }
 }
