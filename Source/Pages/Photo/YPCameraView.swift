@@ -139,7 +139,7 @@ internal class YPCameraView: UIView, UIGestureRecognizerDelegate {
             button.heightAnchor.constraint(equalToConstant: 36).isActive = true
         }
 
-        zoomButton05x.setTitle(".5", for: .normal)
+        zoomButton05x.setTitle("0,5", for: .normal)
         zoomButton1x.setTitle("1×", for: .normal)
         zoomButton2x.setTitle("2×", for: .normal)
 
