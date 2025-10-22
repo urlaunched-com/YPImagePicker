@@ -243,7 +243,7 @@ private extension YPPhotoCaptureHelper {
         videoLayer = AVCaptureVideoPreviewLayer(session: session)
         DispatchQueue.main.async {
             self.videoLayer.frame = self.previewView.bounds
-            self.videoLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+            self.videoLayer.videoGravity = AVLayerVideoGravity.resizeAspect
             self.previewView.layer.addSublayer(self.videoLayer)
         }
     }

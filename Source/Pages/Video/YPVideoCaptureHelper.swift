@@ -326,7 +326,7 @@ class YPVideoCaptureHelper: NSObject {
         let videoLayer = AVCaptureVideoPreviewLayer(session: session)
         DispatchQueue.main.async {
             videoLayer.frame = self.previewView.bounds
-            videoLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+            videoLayer.videoGravity = AVLayerVideoGravity.resizeAspect
             self.previewView.layer.addSublayer(videoLayer)
         }
     }
